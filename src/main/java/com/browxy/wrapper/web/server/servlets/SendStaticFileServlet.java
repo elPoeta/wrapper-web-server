@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.browxy.wrapper.web.fileUtils.FileManager;
 import com.browxy.wrapper.web.fileUtils.MimeTypeUtil;
+import com.browxy.wrapper.web.server.config.Config;
 import com.browxy.wrapper.web.server.config.project.ProjectConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,14 +77,15 @@ public class SendStaticFileServlet extends HttpServlet {
 	private String buildHtmlProjectMetadata(String content) {
 		ProjectConfig projectConfig = null;
         Gson gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
+        Config config = Config.getInstance();
 		try {
-			String containerBasePath = System.getProperty("containerBasePath");
+			String containerBasePath = config.getContainerBasePath();
 			String path = containerBasePath + File.separator + "metadata" + File.separator + "project.json";
 			String metadata = FileManager.readFile(path, "UTF-8");
 			projectConfig = gson.fromJson(metadata, ProjectConfig.class);
-			String hostSocketPort = System.getenv("HOST_SOCKET_PORT") != null ? System.getenv("HOST_SOCKET_PORT")
-					: System.getProperty("PORT");
-            projectConfig.setSocketPort(Integer.parseInt(hostSocketPort));
+			int hostSocketPort = System.getenv("HOST_SOCKET_PORT") != null ? Integer.parseInt(System.getenv("HOST_SOCKET_PORT"))
+					: config.getSocketPort();
+            projectConfig.setSocketPort(hostSocketPort);
             projectConfig.setEntryPoint(this.entryPoint);
 		    
 		} catch (Exception e) {
