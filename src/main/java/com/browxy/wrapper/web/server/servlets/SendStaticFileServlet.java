@@ -62,7 +62,7 @@ public class SendStaticFileServlet extends HttpServlet {
 				resp.getWriter().write(content);
 			} else {
 				resp.setContentType("text/html");
-				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Static file not found");
+				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Static file not found!");
 			}
 		} catch (Exception e) {
 			logger.error("unable to send static content", e);
